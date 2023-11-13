@@ -16,6 +16,6 @@ router
 	.get(checkAuth, obtenerTarea)
 	.put(checkAuth, actualizarTarea)
 	.delete(checkAuth, eliminarTarea);
-router.post('/estado/:id', cambiarEstadoTarea);
+router.post('/estado/:id', checkAuth, cambiarEstadoTarea);
 
 export default router;
