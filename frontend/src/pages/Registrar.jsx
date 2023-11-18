@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Alerta from '../components/Alerta';
+import axios from 'axios';
 
 const Registrar = () => {
 	const [nombre, setNombre] = useState('');
@@ -8,8 +9,9 @@ const Registrar = () => {
 	const [password, setPassword] = useState('');
 	const [password2, setPassword2] = useState('');
 	const [alerta, setAlerta] = useState({});
+	const [equalPassword, setEqualPassword] = useState('');
 
-	const handleCrearCuenta = e => {
+	const handleCrearCuenta = async e => {
 		e.preventDefault();
 		if ([nombre, email, password, password2].includes('')) {
 			setAlerta({
@@ -26,6 +28,46 @@ const Registrar = () => {
 			});
 			return;
 		}
+
+		if (password.length < 6) {
+			setAlerta({
+				msg: 'El password debe tener al menos 6 caracteres',
+				error: true,
+			});
+			return;
+		}
+
+		setAlerta({});
+
+		// Crear el usuario en la API
+		try {
+			const { data } = await axios.post(
+				`${import.meta.env.VITE_BACKEND_URL}/api/usuarios`,
+				{
+					nombre,
+					email,
+					password,
+				}
+			);
+			setAlerta({
+				msg: data.msg,
+				error: false,
+			});
+
+			setNombre('');
+			setEmail('');
+			setPassword('');
+			setPassword2('');
+
+			setTimeout(() => {
+				setAlerta({});
+			}, 3000);
+		} catch (error) {
+			setAlerta({
+				msg: error.response.data.msg,
+				error: true,
+			});
+		}
 	};
 
 	useEffect(() => {
@@ -34,6 +76,18 @@ const Registrar = () => {
 		}, 3000);
 		return () => clearTimeout(timeout);
 	}, [alerta]);
+
+	useEffect(() => {
+		if (password2 === '') {
+			setEqualPassword('');
+			return;
+		}
+		if (password !== password2) {
+			setEqualPassword('border-red-500');
+		} else {
+			setEqualPassword('border-green-500');
+		}
+	}, [password, password2]);
 
 	const { msg } = alerta;
 
@@ -113,7 +167,7 @@ const Registrar = () => {
 						id='password2'
 						type='password'
 						placeholder='Repetir tu Password'
-						className='w-full mt-3 p-3 border rounded-xl bg-gray-50'
+						className={`w-full mt-3 p-3 border rounded-xl bg-gray-50 focus:outline-none ${equalPassword}`}
 						value={password2}
 						onChange={e => setPassword2(e.target.value)}
 					/>
