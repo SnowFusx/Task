@@ -1,7 +1,7 @@
 import Usuario from '../models/Usuario.js';
 import generarId from '../helpers/generarId.js';
 import generarJWT from '../helpers/generarJWT.js';
-import emailRegistro from '../helpers/emails.js';
+import { emailRegistro, emailResetPassword } from '../helpers/emails.js';
 
 const registrar = async (req, res) => {
 	// Evitar registros duplicados
@@ -96,6 +96,13 @@ const olvidePassword = async (req, res) => {
 	try {
 		usuario.token = generarId();
 		await usuario.save();
+
+		// Enviar email de confirmación
+		emailResetPassword({
+			email: usuario.email,
+			nombre: usuario.nombre,
+			token: usuario.token,
+		});
 
 		res.json({
 			msg: 'Se ha enviado un email para reestablecer la contraseña',
