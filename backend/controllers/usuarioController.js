@@ -27,7 +27,7 @@ const registrar = async (req, res) => {
 		});
 
 		res.json({
-			msg: 'Usuario creado correctamente, revisa tu email y confirmar tu cuenta',
+			msg: 'Usuario creado correctamente, revisa tu email y confirma tu cuenta',
 		});
 	} catch (error) {
 		console.error(`Error: ${error.message}`);
@@ -67,6 +67,7 @@ const autenticar = async (req, res) => {
 const confirmar = async (req, res) => {
 	console.log(req.params.token);
 	const usuarioConfirmar = await Usuario.findOne({ token: req.params.token });
+
 	if (!usuarioConfirmar) {
 		const error = new Error('Token no válido');
 		return res.status(403).json({ msg: error.message });

@@ -7,6 +7,7 @@ const ConfirmarCuenta = () => {
 	const params = useParams();
 	const { id } = params;
 	const [alerta, setAlerta] = useState({});
+	const [cuentaConfirmada, setCuentaConfirmada] = useState(false);
 
 	useEffect(() => {
 		const handleConfirmarCuenta = async () => {
@@ -18,6 +19,7 @@ const ConfirmarCuenta = () => {
 					msg: data.msg,
 					error: false,
 				});
+				setCuentaConfirmada(true);
 			} catch (error) {
 				setAlerta({
 					msg: error.response.data.msg,
@@ -26,7 +28,7 @@ const ConfirmarCuenta = () => {
 			}
 		};
 		handleConfirmarCuenta();
-	}, [id]);
+	}, []);
 
 	const { msg } = alerta;
 
@@ -36,15 +38,32 @@ const ConfirmarCuenta = () => {
 				Confirma tu cuenta y comienza a crear tus{' '}
 				<span className='text-slate-700'>proyectos</span>
 			</h1>
-			<div className='my-10 bg-white shadow rounded-lg p-10'>
-				{msg && <Alerta alerta={alerta} />}
-				<Link
-					to='/'
-					className='block text-center text-slate-500 text-sm my-3 uppercase hover:text-gray-700'
-				>
-					Volver al Login
-				</Link>
-			</div>
+			{cuentaConfirmada ? (
+				<div className='my-10 bg-white shadow rounded-lg p-10'>
+					<Alerta
+						alerta={{
+							msg: 'Cuenta confirmada correctamente',
+							error: false,
+						}}
+					/>
+					<Link
+						to='/'
+						className='block text-center text-slate-500 text-sm my-3 uppercase hover:text-gray-700'
+					>
+						Volver al Login
+					</Link>
+				</div>
+			) : (
+				<div className='my-10 bg-white shadow rounded-lg p-10'>
+					{msg && <Alerta alerta={alerta} />}
+					<Link
+						to='/'
+						className='block text-center text-slate-500 text-sm my-3 uppercase hover:text-gray-700'
+					>
+						Volver al Login
+					</Link>
+				</div>
+			)}
 		</>
 	);
 };
