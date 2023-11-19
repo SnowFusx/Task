@@ -10,7 +10,7 @@ const Login = () => {
 	const [password, setPassword] = useState('');
 	const [alerta, setAlerta] = useState({});
 
-	const { autenticado } = useAuth();
+	const { setAuth } = useAuth();
 
 	const handleSubmit = async e => {
 		e.preventDefault();
@@ -32,15 +32,7 @@ const Login = () => {
 			});
 
 			localStorage.setItem('token', data.token);
-			setAlerta({
-				msg: data.msg,
-				error: false,
-			});
-
-			setTimeout(() => {
-				setAlerta({});
-				navigate('/');
-			}, 3000);
+			setAuth(data);
 		} catch (error) {
 			setAlerta({
 				msg: error.response.data.msg,
