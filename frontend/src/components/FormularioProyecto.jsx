@@ -13,7 +13,7 @@ const FormularioProyecto = () => {
 
 	const navigate = useNavigate();
 
-	const handleSubmit = e => {
+	const handleSubmit = async e => {
 		e.preventDefault();
 
 		// Validar el formulario
@@ -26,12 +26,17 @@ const FormularioProyecto = () => {
 		}
 
 		// Pasar los datos hacia el provider
-		submitProyecto({
+		await submitProyecto({
 			nombre,
 			descripcion,
 			fechaEntrega,
 			cliente,
 		});
+
+		setNombre('');
+		setDescripcion('');
+		setFechaEntrega('');
+		setCliente('');
 	};
 
 	const { msg } = alerta;
