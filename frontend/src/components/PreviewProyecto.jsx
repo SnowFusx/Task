@@ -1,21 +1,22 @@
 import { Link } from 'react-router-dom';
 import useProyectos from '../hooks/useProyectos';
+import { formatearFecha } from '../helpers/formatearFecha.js';
 
 const PreviewProyecto = ({ proyecto }) => {
-	const { nombre, _id, cliente } = proyecto;
+	console.log(proyecto);
+	const { nombre, _id, cliente, createdAt } = proyecto;
+
+	const fechaOriginal = createdAt.split('T')[0];
+	const fechaFormateada = formatearFecha(fechaOriginal);
 
 	const { confirmarEliminarProyecto } = useProyectos();
 	return (
 		<div className='border-b p-5 flex'>
-			<Link
-				to={`/proyectos/${_id}`}
-				className='flex-1 uppercase font-bold'
-			>
-				<p className='flex-1'>
-					{nombre}
-					<span className='text-sm text-gray-500 uppercase'>
-						{''} {cliente}{' '}
-					</span>
+			<Link to={`/proyectos/${_id}`} className='flex-1  font-bold'>
+				<p className='flex-1'>{nombre}</p>
+				<p className='text-sm text-gray-500'>
+					{''} {cliente} , creado el{' '}
+					<span className='text-xs'>{fechaFormateada}</span>
 				</p>
 			</Link>
 			<div className='flex items-center gap-2 '>
