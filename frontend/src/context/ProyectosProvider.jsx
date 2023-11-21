@@ -114,7 +114,7 @@ const ProyectosProvider = ({ children }) => {
 				config
 			);
 
-			setProyectos([...proyectos, data]);
+			setProyectos([data, ...proyectos]);
 
 			setAlerta({
 				msg: 'Proyecto creado correctamente',
@@ -154,15 +154,6 @@ const ProyectosProvider = ({ children }) => {
 		} finally {
 			setCargando(false);
 		}
-	};
-
-	const confirmarEliminarProyecto = id => {
-		const confirmacion = window.confirm(
-			'¿Estás seguro de eliminar este proyecto?'
-		);
-		if (!confirmacion) return;
-
-		eliminarProyecto(id);
 	};
 
 	const eliminarProyecto = async id => {
@@ -212,7 +203,7 @@ const ProyectosProvider = ({ children }) => {
 				obtenerProyecto,
 				proyecto,
 				cargando,
-				confirmarEliminarProyecto,
+				eliminarProyecto,
 			}}
 		>
 			{children}

@@ -8,7 +8,7 @@ const Proyectos = () => {
 		<>
 			<h1 className='text-4xl font-black'>Proyectos</h1>
 
-			<div className='bg-white shadow mt-10 rounded-lg'>
+			<div className='mt-10'>
 				{proyectos.length ? (
 					proyectos.map(proyecto => (
 						<PreviewProyecto

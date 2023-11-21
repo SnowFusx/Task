@@ -5,7 +5,7 @@ import FormularioProyecto from '../components/FormularioProyecto';
 
 const EditarProyecto = () => {
 	const params = useParams();
-	const { obtenerProyecto, proyecto, cargando, confirmarEliminarProyecto } =
+	const { obtenerProyecto, proyecto, cargando, eliminarProyecto } =
 		useProyectos();
 
 	useEffect(() => {
@@ -13,6 +13,12 @@ const EditarProyecto = () => {
 	}, []);
 
 	const { nombre } = proyecto;
+
+	const handleEliminar = () => {
+		if (confirm('¿Estás seguro de eliminar el proyecto?')) {
+			eliminarProyecto(params.id);
+		}
+	};
 
 	if (cargando) return <div>Cargando...</div>;
 
@@ -23,7 +29,7 @@ const EditarProyecto = () => {
 
 				<button
 					className='flex gap-2 ml-5 px-5 py-3 text-sm items-center text-gray-600 rounded-lg uppercase font-bold hover:text-red-700 transition-colors'
-					onClick={() => confirmarEliminarProyecto(params.id)}
+					onClick={handleEliminar}
 				>
 					<svg
 						xmlns='http://www.w3.org/2000/svg'

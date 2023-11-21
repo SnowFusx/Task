@@ -6,13 +6,15 @@ import Alerta from '../components/Alerta';
 
 const Proyecto = () => {
 	const params = useParams();
-	const {
-		obtenerProyecto,
-		proyecto,
-		cargando,
-		alerta,
-		confirmarEliminarProyecto,
-	} = useProyectos();
+
+	const handleEliminar = () => {
+		if (confirm('¿Estás seguro de eliminar el proyecto?')) {
+			eliminarProyecto(params.id);
+		}
+	};
+
+	const { obtenerProyecto, proyecto, cargando, alerta, eliminarProyecto } =
+		useProyectos();
 
 	useEffect(() => {
 		obtenerProyecto(params.id);
@@ -36,7 +38,7 @@ const Proyecto = () => {
 		<>
 			<div className='flex justify-between'>
 				<h1 className='font-black text-4xl'>{nombre}</h1>
-				<div className='flex items-center gap-2 text-gray-600 hover:text-black cursor-pointer'>
+				<div className='flex items-center gap-2 text-gray-600 text-sm hover:text-black cursor-pointer'>
 					<svg
 						xmlns='http://www.w3.org/2000/svg'
 						fill='none'
@@ -58,8 +60,8 @@ const Proyecto = () => {
 						Editar
 					</Link>
 					<button
-						className='flex gap-2 ml-5 px-5 py-3 text-sm items-center text-gray-600 rounded-lg uppercase font-bold hover:text-red-700 transition-colors'
-						onClick={() => confirmarEliminarProyecto(params.id)}
+						className='flex gap-2 ml-5 px-1 py-3 text-sm items-center text-gray-600 rounded-lg uppercase font-bold hover:text-red-700 transition-colors'
+						onClick={handleEliminar}
 					>
 						<svg
 							xmlns='http://www.w3.org/2000/svg'
@@ -67,7 +69,7 @@ const Proyecto = () => {
 							viewBox='0 0 24 24'
 							strokeWidth={1.5}
 							stroke='currentColor'
-							className='w-6 h-6'
+							className='w-4 h-4'
 						>
 							<path
 								strokeLinecap='round'
@@ -80,6 +82,13 @@ const Proyecto = () => {
 				</div>
 			</div>
 			{msg && <Alerta alerta={alerta} />}
+
+			<button
+				type='button'
+				className='text-sm mt-5 px-5 py-3 w-full md:w-auto rounded-lg uppercase font-bold bg-indigo-600 text-white text-center hover:bg-indigo-800 transition-colors'
+			>
+				<Link to='/proyectos'>Crear Tarea</Link>
+			</button>
 		</>
 	);
 };
