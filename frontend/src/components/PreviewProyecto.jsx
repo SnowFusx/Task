@@ -14,6 +14,7 @@ const PreviewProyecto = ({ proyecto }) => {
 	const handleEliminar = () => {
 		if (confirm('¿Estás seguro de eliminar el proyecto?')) {
 			eliminarProyecto(_id);
+			return;
 		}
 	};
 

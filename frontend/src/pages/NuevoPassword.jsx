@@ -63,7 +63,7 @@ const NuevoPassword = () => {
 
 	return (
 		<>
-			<h1 className='text-sky-600 font-black text-6xl capitalize'>
+			<h1 className='text-sky-900 font-black text-6xl capitalize'>
 				Reestable tu Password y no pierdas acceso a tus{' '}
 				<span className='text-slate-700'>proyectos</span>
 			</h1>

@@ -2,16 +2,21 @@ import { useState, useEffect, createContext } from 'react';
 import Alerta from '../components/Alerta';
 import clienteAxios from '../config/clienteAxios';
 import { useNavigate } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
 
 const ProyectosContext = createContext();
 
 const ProyectosProvider = ({ children }) => {
 	const [proyectos, setProyectos] = useState([]);
+	const [tareas, setTareas] = useState([]);
 	const [alerta, setAlerta] = useState({});
 	const [proyecto, setProyecto] = useState({});
+	const [tarea, setTarea] = useState({});
 	const [cargando, setCargando] = useState(false);
+	const [modalFormularioTarea, setModalFormularioTarea] = useState(false);
 
 	const navigate = useNavigate();
+	const { auth } = useAuth();
 
 	useEffect(() => {
 		const obtenerProyectos = async () => {
@@ -37,7 +42,7 @@ const ProyectosProvider = ({ children }) => {
 			}
 		};
 		obtenerProyectos();
-	}, []);
+	}, [auth]);
 
 	const mostrarAlerta = alerta => {
 		setAlerta(alerta);
@@ -193,6 +198,58 @@ const ProyectosProvider = ({ children }) => {
 		}
 	};
 
+	const handleModalTarea = () => {
+		setModalFormularioTarea(!modalFormularioTarea);
+	};
+
+	const submitTarea = async tarea => {
+		try {
+			const token = localStorage.getItem('token');
+			if (!token) {
+				navigate('/');
+				return;
+			}
+			const config = {
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
+			};
+			const { data } = await clienteAxios.post(
+				`/tareas`,
+				{ ...tarea, proyecto: proyecto._id },
+				config
+			);
+
+			const proyectoActualizado = {
+				...proyecto,
+				tareas: [...proyecto.tareas, data],
+			};
+			setProyecto(proyectoActualizado);
+
+			setAlerta({
+				msg: 'Tarea creada correctamente',
+				error: false,
+			});
+
+			setTimeout(() => {
+				setAlerta({});
+				handleModalTarea();
+			}, 2000);
+		} catch (error) {
+			mostrarAlerta({
+				msg: error.response.data.msg,
+				error: true,
+			});
+		}
+	};
+
+	const cerrarSesionProyecto = () => {
+		setProyectos([]);
+		setProyecto({});
+		setAlerta({});
+	};
+
 	return (
 		<ProyectosContext.Provider
 			value={{
@@ -204,6 +261,10 @@ const ProyectosProvider = ({ children }) => {
 				proyecto,
 				cargando,
 				eliminarProyecto,
+				modalFormularioTarea,
+				handleModalTarea,
+				submitTarea,
+				cerrarSesionProyecto,
 			}}
 		>
 			{children}

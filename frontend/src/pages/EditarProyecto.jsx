@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import useProyectos from '../hooks/useProyectos';
 import FormularioProyecto from '../components/FormularioProyecto';
+import Loading from '../components/Loading';
 
 const EditarProyecto = () => {
 	const params = useParams();
@@ -17,10 +18,11 @@ const EditarProyecto = () => {
 	const handleEliminar = () => {
 		if (confirm('¿Estás seguro de eliminar el proyecto?')) {
 			eliminarProyecto(params.id);
+			return;
 		}
 	};
 
-	if (cargando) return <div>Cargando...</div>;
+	if (cargando) return <Loading />;
 
 	return (
 		<>
@@ -28,7 +30,7 @@ const EditarProyecto = () => {
 				<h1 className='font-black text-4xl'>Editando: {nombre}</h1>
 
 				<button
-					className='flex gap-2 ml-5 px-5 py-3 text-sm items-center text-gray-600 rounded-lg uppercase font-bold hover:text-red-700 transition-colors'
+					className='flex gap-1 ml-5 px-1 py-3 text-sm items-center text-gray-600 rounded-lg uppercase font-bold hover:text-red-700 transition-colors'
 					onClick={handleEliminar}
 				>
 					<svg
@@ -37,7 +39,7 @@ const EditarProyecto = () => {
 						viewBox='0 0 24 24'
 						strokeWidth={1.5}
 						stroke='currentColor'
-						className='w-6 h-6'
+						className='w-4 h-4'
 					>
 						<path
 							strokeLinecap='round'

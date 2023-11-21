@@ -1,20 +1,33 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import useProyectos from '../hooks/useProyectos';
 import { Link } from 'react-router-dom';
 import Alerta from '../components/Alerta';
+import ModalFormularioTarea from '../components/ModalFormularioTarea';
+import Loading from '../components/Loading';
 
 const Proyecto = () => {
 	const params = useParams();
 
+	const [modal, setModal] = useState(false);
+
 	const handleEliminar = () => {
 		if (confirm('¿Estás seguro de eliminar el proyecto?')) {
 			eliminarProyecto(params.id);
+
+			return;
 		}
 	};
 
-	const { obtenerProyecto, proyecto, cargando, alerta, eliminarProyecto } =
-		useProyectos();
+	const {
+		obtenerProyecto,
+		proyecto,
+		cargando,
+		alerta,
+		eliminarProyecto,
+		handleModalTarea,
+		modalFormularioTarea,
+	} = useProyectos();
 
 	useEffect(() => {
 		obtenerProyecto(params.id);
@@ -32,7 +45,7 @@ const Proyecto = () => {
 
 	const { msg } = alerta;
 
-	if (cargando) return <div>Cargando...</div>;
+	if (cargando) return <Loading />;
 
 	return (
 		<>
@@ -81,14 +94,39 @@ const Proyecto = () => {
 					</button>
 				</div>
 			</div>
-			{msg && <Alerta alerta={alerta} />}
+
+			{modalFormularioTarea ? (
+				<></> // Contenido cuando modal es true
+			) : (
+				msg && <Alerta alerta={alerta} /> // Contenido cuando modal es false y msg es true
+			)}
 
 			<button
 				type='button'
-				className='text-sm mt-5 px-5 py-3 w-full md:w-auto rounded-lg uppercase font-bold bg-indigo-600 text-white text-center hover:bg-indigo-800 transition-colors'
+				className='flex items-center justify-center text-sm mt-5 px-5 py-3 w-full md:w-auto rounded-lg uppercase font-bold bg-slate-800 text-white text-center hover:bg-slate-950 transition-colors'
+				onClick={handleModalTarea}
 			>
-				<Link to='/proyectos'>Crear Tarea</Link>
+				<svg
+					xmlns='http://www.w3.org/2000/svg'
+					fill='none'
+					viewBox='0 0 24 24'
+					strokeWidth={1.5}
+					stroke='currentColor'
+					className='w-5 h-5'
+				>
+					<path
+						strokeLinecap='round'
+						strokeLinejoin='round'
+						d='M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75'
+					/>
+				</svg>
+				Crear Tarea
 			</button>
+			<ModalFormularioTarea
+				modal={modal}
+				setModal={setModal}
+				idProyecto={params.id}
+			/>
 		</>
 	);
 };
