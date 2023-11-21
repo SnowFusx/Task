@@ -40,11 +40,7 @@ const obtenerProyecto = async (req, res) => {
 		return res.status(401).json({ msg: error.message });
 	}
 
-	// Obtener las tareas del proyecto
-	const tareas = await Tarea.find().where('proyecto').equals(proyecto._id);
-	const proyectoConTareas = { ...proyecto._doc, tareas };
-
-	res.json(proyectoConTareas);
+	res.json(proyecto);
 };
 
 const editarProyecto = async (req, res) => {

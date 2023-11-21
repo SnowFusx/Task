@@ -31,7 +31,7 @@ const AuthProvider = ({ children }) => {
 					config
 				);
 				setAuth(data);
-				navigate('/proyectos');
+				//navigate('/proyectos');
 			} catch (error) {
 				setAuth({});
 			} finally {

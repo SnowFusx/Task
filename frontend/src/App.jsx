@@ -10,6 +10,7 @@ import ConfirmarCuenta from './pages/ConfirmarCuenta';
 import Proyectos from './pages/Proyectos';
 import NuevoProyecto from './pages/NuevoProyecto';
 import Proyecto from './pages/Proyecto';
+import EditarProyecto from './pages/EditarProyecto';
 
 import { AuthProvider } from './context/AuthProvider';
 import { ProyectosProvider } from './context/ProyectosProvider';
@@ -43,6 +44,10 @@ function App() {
 								element={<NuevoProyecto />}
 							/>
 							<Route path=':id' element={<Proyecto />} />
+							<Route
+								path='editar/:id'
+								element={<EditarProyecto />}
+							/>
 						</Route>
 					</Routes>
 				</ProyectosProvider>
