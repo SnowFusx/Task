@@ -3,8 +3,7 @@ import useProyectos from '../hooks/useProyectos';
 import { formatearFecha } from '../helpers/formatearFecha.js';
 
 const PreviewProyecto = ({ proyecto }) => {
-	console.log(proyecto);
-	const { nombre, _id, cliente, createdAt } = proyecto;
+	const { nombre, _id, cliente, createdAt, descripcion } = proyecto;
 
 	const fechaOriginal = createdAt.split('T')[0];
 	const fechaFormateada = formatearFecha(fechaOriginal);
@@ -19,16 +18,20 @@ const PreviewProyecto = ({ proyecto }) => {
 	};
 
 	return (
-		<div className='bg-white shadow mt-5 rounded-lg'>
-			<div className='border-b p-5 flex'>
+		<div className=' bg-white shadow mt-5 rounded-lg h-48 w-64'>
+			<div className='flex flex-col h-full justify-between p-5'>
 				<Link to={`/proyectos/${_id}`} className='flex-1  font-bold'>
 					<p className='flex-1'>{nombre}</p>
+
 					<p className='text-sm text-gray-500'>
 						{''} {cliente} , creado el{' '}
 						<span className='text-xs'>{fechaFormateada}</span>
 					</p>
+					<p className='text-xs font-normal mt-2 text-gray-500'>
+						{descripcion.slice(0, 100)}...
+					</p>
 				</Link>
-				<div className='flex items-center gap-2 text-xs'>
+				<div className='flex items-center gap-3 text-xs'>
 					<Link
 						to={`/proyectos/${_id}`}
 						className='flex gap-2 items-center uppercase font-bold text-gray-600 hover:text-black cursor-pointer'
@@ -52,12 +55,12 @@ const PreviewProyecto = ({ proyecto }) => {
 								d='M15 12a3 3 0 11-6 0 3 3 0 016 0z'
 							/>
 						</svg>
-						Ver Proyecto
+						Ver
 					</Link>
 
 					<Link
 						to={`/proyectos/editar/${_id}`}
-						className='uppercase font-bold flex gap-2 items-center text-gray-600 hover:text-black cursor-pointer'
+						className='uppercase font-bold flex gap-1 items-center text-gray-600 hover:text-black cursor-pointer'
 					>
 						<svg
 							xmlns='http://www.w3.org/2000/svg'
@@ -65,7 +68,7 @@ const PreviewProyecto = ({ proyecto }) => {
 							viewBox='0 0 24 24'
 							strokeWidth={1.5}
 							stroke='currentColor'
-							className='w-4 h-4'
+							className='w-3 h-3'
 						>
 							<path
 								strokeLinecap='round'
@@ -76,7 +79,7 @@ const PreviewProyecto = ({ proyecto }) => {
 						Editar
 					</Link>
 					<button
-						className='flex z-50 gap-1 px-1 py-3 text-xs items-center text-gray-600 rounded-lg uppercase font-bold hover:text-red-700 transition-colors'
+						className='flex z-50 gap-0 px-1 text-xs items-center text-gray-600 rounded-lg uppercase font-bold hover:text-red-700 transition-colors'
 						onClick={handleEliminar}
 					>
 						<svg
@@ -93,7 +96,7 @@ const PreviewProyecto = ({ proyecto }) => {
 								d='M6 18L18 6M6 6l12 12'
 							/>
 						</svg>
-						<p>Eliminar Proyecto</p>
+						<p>Eliminar</p>
 					</button>
 				</div>
 			</div>

@@ -1,10 +1,10 @@
 import Proyecto from '../models/Proyecto.js';
-import Tarea from '../models/Tarea.js';
 
 const obtenerProyectos = async (req, res) => {
-	const proyectos = await Proyecto.find({ creador: req.usuario.id }).sort({
-		createdAt: -1,
-	});
+	const proyectos = await Proyecto.find()
+		.where('creador')
+		.equals(req.usuario.id)
+		.select('-tareas');
 	res.json(proyectos);
 };
 
@@ -29,7 +29,7 @@ const obtenerProyecto = async (req, res) => {
 		return res.status(404).json({ msg: error.message });
 	}
 
-	const proyecto = await Proyecto.findById(id.trim());
+	const proyecto = await Proyecto.findById(id.trim()).populate('tareas');
 	if (!proyecto) {
 		const error = new Error('Proyecto no encontrado');
 		return res.status(404).json({ msg: error.message });

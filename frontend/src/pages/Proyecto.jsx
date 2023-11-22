@@ -1,15 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import useProyectos from '../hooks/useProyectos';
 import { Link } from 'react-router-dom';
 import Alerta from '../components/Alerta';
 import ModalFormularioTarea from '../components/ModalFormularioTarea';
+import ModalEliminarTarea from '../components/ModalEliminarTarea.jsx';
 import Loading from '../components/Loading';
+import { formatearFecha } from '../helpers/formatearFecha.js';
+import PreviewTarea from '../components/PreviewTarea.jsx';
 
 const Proyecto = () => {
 	const params = useParams();
-
-	const [modal, setModal] = useState(false);
 
 	const handleEliminar = () => {
 		if (confirm('¿Estás seguro de eliminar el proyecto?')) {
@@ -33,15 +34,10 @@ const Proyecto = () => {
 		obtenerProyecto(params.id);
 	}, []);
 
-	const {
-		nombre,
-		descripcion,
-		cliente,
-		fechaInicio,
-		fechaEntrega,
-		tecnologias,
-		url,
-	} = proyecto;
+	const { nombre, descripcion, cliente, fechaEntrega } = proyecto;
+
+	const fechaOriginal = fechaEntrega?.split('T')[0];
+	const fechaFormateada = formatearFecha(fechaOriginal);
 
 	const { msg } = alerta;
 
@@ -103,7 +99,7 @@ const Proyecto = () => {
 
 			<button
 				type='button'
-				className='flex items-center justify-center text-sm mt-5 px-5 py-3 w-full md:w-auto rounded-lg uppercase font-bold bg-slate-800 text-white text-center hover:bg-slate-950 transition-colors'
+				className='flex items-center justify-center gap-2 text-sm mt-5 px-5 py-3 w-full md:w-auto rounded-lg uppercase font-bold bg-slate-800 text-white text-center hover:bg-slate-950 transition-colors'
 				onClick={handleModalTarea}
 			>
 				<svg
@@ -122,11 +118,50 @@ const Proyecto = () => {
 				</svg>
 				Crear Tarea
 			</button>
-			<ModalFormularioTarea
-				modal={modal}
-				setModal={setModal}
-				idProyecto={params.id}
-			/>
+
+			<div className='grid grid-cols-1 md:grid-cols-2 gap-5 mt-5'>
+				<div className='bg-white rounded-lg shadow-lg p-5'>
+					<h2 className='font-bold text-xl mb-3'>Descripción</h2>
+					<p className='text-gray-600'>{descripcion}</p>
+				</div>
+				<div className='bg-white rounded-lg shadow-lg p-5'>
+					<h2 className='font-bold text-xl mb-3'>Información</h2>
+					<ul className='text-gray-600'>
+						<li>
+							<span className='font-bold'>Proyecto: </span>
+							{nombre}
+						</li>
+						<li>
+							<span className='font-bold'>Cliente: </span>
+							{cliente}
+						</li>
+
+						<li>
+							<span className='font-bold'>
+								Fecha de entrega:{' '}
+							</span>
+							{fechaFormateada}
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<h2 className='font-bold text-xl mt-10'>Tareas del proyecto</h2>
+
+			<div className='mt-10'>
+				{proyecto.tareas?.length ? (
+					proyecto.tareas?.map(tarea => (
+						<PreviewTarea key={tarea._id} tarea={tarea} />
+					))
+				) : (
+					<p className='text-center text-gray-600 uppercase p-10 my-5'>
+						No hay tareas aún
+					</p>
+				)}
+			</div>
+
+			<ModalFormularioTarea />
+			<ModalEliminarTarea />
 		</>
 	);
 };

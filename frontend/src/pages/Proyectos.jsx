@@ -8,7 +8,7 @@ const Proyectos = () => {
 		<>
 			<h1 className='text-4xl font-black'>Proyectos</h1>
 
-			<div className='mt-10'>
+			<div className='mt-10 flex flex-wrap gap-4'>
 				{proyectos.length ? (
 					proyectos.map(proyecto => (
 						<PreviewProyecto

@@ -3,6 +3,7 @@ import useAuth from '../hooks/useAuth';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import Loading from '../components/Loading';
+import { Toaster } from 'sonner';
 
 const RutaProtegida = () => {
 	const { auth, cargando } = useAuth();
@@ -12,17 +13,20 @@ const RutaProtegida = () => {
 	return (
 		<>
 			{auth._id ? (
-				<div className='bg-gray-100'>
-					<Header />
-
-					<div className='md:flex md:min-h-screen'>
-						<Sidebar />
-
-						<main className='flex-1 p-10'>
-							<Outlet />
-						</main>
+				<>
+					<Toaster richColors closeButton />
+					<div className='flex bg-gray-100'>
+						<div className='border-r border-gray-300'>
+							<Sidebar />
+						</div>
+						<div className='md:flex md:flex-col w-full md:min-h-screen'>
+							<Header />
+							<main className='flex-1 p-10'>
+								<Outlet />
+							</main>
+						</div>
 					</div>
-				</div>
+				</>
 			) : (
 				<Navigate to='/' />
 			)}

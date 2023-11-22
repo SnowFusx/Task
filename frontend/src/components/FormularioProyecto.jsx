@@ -59,7 +59,7 @@ const FormularioProyecto = () => {
 
 	return (
 		<>
-			<div className='block w-1/2'>
+			<div className='block w-full md:w-3/4 lg:w-1/2'>
 				{msg && <Alerta alerta={alerta} />}
 				<form
 					className='bg-white py-10 px-5 rounded-lg shadow block'
@@ -138,7 +138,7 @@ const FormularioProyecto = () => {
 
 					<input
 						type='submit'
-						className='bg-sky-600 hover:bg-sky-700 w-full p-3 rounded text-white uppercase font-bold cursor-pointer transition-colors'
+						className='bg-slate-800 hover:bg-slate-900 w-full p-3 rounded text-white uppercase font-bold cursor-pointer transition-colors'
 						value={params.id ? 'Editar Proyecto' : 'Crear Proyecto'}
 					/>
 				</form>

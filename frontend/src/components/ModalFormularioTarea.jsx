@@ -2,13 +2,18 @@ import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import useProyectos from '../hooks/useProyectos';
 import Alerta from './Alerta';
+import { useParams } from 'react-router-dom';
 
-const PRIORIDAD = ['Baja', 'Media', 'Alta'];
+const PRIORIDAD = ['baja', 'media', 'alta'];
 
 const ModalFormularioTarea = () => {
+	const [id, setId] = useState('');
 	const [nombre, setNombre] = useState('');
 	const [descripcion, setDescripcion] = useState('');
 	const [prioridad, setPrioridad] = useState('');
+	const [fechaEntrega, setFechaEntrega] = useState('');
+
+	const params = useParams();
 
 	const {
 		modalFormularioTarea,
@@ -16,22 +21,47 @@ const ModalFormularioTarea = () => {
 		mostrarAlerta,
 		alerta,
 		submitTarea,
+		tarea,
 	} = useProyectos();
 
-	const handleSubmit = e => {
+	useEffect(() => {
+		if (tarea?._id) {
+			setId(tarea._id);
+			setNombre(tarea.nombre);
+			setDescripcion(tarea.descripcion);
+			setPrioridad(tarea.prioridad);
+			setFechaEntrega(tarea.fechaEntrega?.split('T')[0]);
+			return;
+		}
+		setId('');
+		setNombre('');
+		setDescripcion('');
+		setPrioridad('');
+		setFechaEntrega('');
+	}, [tarea]);
+
+	const handleSubmit = async e => {
 		e.preventDefault();
-		if ([nombre, descripcion, prioridad].includes('')) {
+		if ([nombre, descripcion, prioridad, fechaEntrega].includes('')) {
 			mostrarAlerta({
 				error: 'error',
 				msg: 'Todos los campos son obligatorios',
 			});
 			return;
 		}
-		submitTarea({
+		await submitTarea({
+			id,
 			nombre,
 			descripcion,
 			prioridad,
+			fechaEntrega,
+			proyecto: params.id,
 		});
+		setId('');
+		setNombre('');
+		setDescripcion('');
+		setPrioridad('');
+		setFechaEntrega('');
 	};
 
 	const { msg } = alerta;
@@ -101,7 +131,7 @@ const ModalFormularioTarea = () => {
 										as='h3'
 										className='text-2xl leading-6 font-bold text-gray-900'
 									>
-										Crear Tarea
+										{id ? 'Editar Tarea' : 'Nueva Tarea'}
 									</Dialog.Title>
 									{msg && <Alerta alerta={alerta} />}
 									<form
@@ -148,6 +178,27 @@ const ModalFormularioTarea = () => {
 										</div>
 										<div className='mb-5'>
 											<label
+												htmlFor='fecha-entrega'
+												className='text-gray-700 uppercase font-bold text-sm'
+											>
+												Fecha de Entrega
+											</label>
+											<input
+												type='date'
+												id='fecha-entrega'
+												className='w-full border border-gray-400 px-4 py-2 mt-2 rounded-lg focus:outline-none focus:border-blue-500'
+												value={fechaEntrega}
+												onChange={e =>
+													setFechaEntrega(
+														e.target.value.split(
+															'T'
+														)[0]
+													)
+												}
+											/>
+										</div>
+										<div className='mb-5'>
+											<label
 												htmlFor='prioridad'
 												className='text-gray-700 uppercase font-bold text-sm'
 											>
@@ -170,7 +221,12 @@ const ModalFormularioTarea = () => {
 														key={opcion}
 														value={opcion}
 													>
-														{opcion}
+														{opcion
+															.slice(0, 1)
+															.toUpperCase() +
+															opcion
+																.slice(1)
+																.toLowerCase()}
 													</option>
 												))}
 											</select>
@@ -178,7 +234,11 @@ const ModalFormularioTarea = () => {
 										<input
 											type='submit'
 											className='bg-slate-800 hover:bg-slate-900 w-full p-3 text-white uppercase font-bold rounded-lg cursor-pointer'
-											value='Crear Tarea'
+											value={
+												id
+													? 'Guardar cambios'
+													: 'Crear tarea'
+											}
 										/>
 									</form>
 								</div>
