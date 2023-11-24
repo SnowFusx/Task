@@ -120,7 +120,7 @@ const Login = () => {
 							to='/olvide-password'
 							className='block text-center text-slate-500 text-sm my-3 uppercase hover:text-gray-700'
 						>
-							Olvide mi password
+							Olvidé mi password
 						</Link>
 					</nav>
 				</>

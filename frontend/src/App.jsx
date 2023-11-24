@@ -14,6 +14,7 @@ import EditarProyecto from './pages/EditarProyecto';
 
 import { AuthProvider } from './context/AuthProvider';
 import { ProyectosProvider } from './context/ProyectosProvider';
+import NuevoColaborador from './pages/NuevoColaborador';
 
 function App() {
 	return (
@@ -47,6 +48,10 @@ function App() {
 							<Route
 								path='editar/:id'
 								element={<EditarProyecto />}
+							/>
+							<Route
+								path='nuevo-colaborador'
+								element={<NuevoColaborador />}
 							/>
 						</Route>
 					</Routes>

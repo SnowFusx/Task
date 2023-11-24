@@ -389,6 +389,7 @@ const ProyectosProvider = ({ children }) => {
 				submitProyecto,
 				obtenerProyecto,
 				proyecto,
+				setProyecto,
 				cargando,
 				eliminarProyecto,
 				modalFormularioTarea,
