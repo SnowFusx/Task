@@ -53,6 +53,10 @@ function App() {
 								path='nuevo-colaborador'
 								element={<NuevoColaborador />}
 							/>
+							<Route
+								path='nuevo-colaborador/:id'
+								element={<NuevoColaborador />}
+							/>
 						</Route>
 					</Routes>
 				</ProyectosProvider>

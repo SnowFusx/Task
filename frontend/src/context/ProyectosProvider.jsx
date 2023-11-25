@@ -374,6 +374,51 @@ const ProyectosProvider = ({ children }) => {
 		}
 	};
 
+	const submitColaborador = async email => {
+		try {
+			const token = localStorage.getItem('token');
+			if (!token) {
+				navigate('/');
+				return;
+			}
+			const config = {
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
+			};
+
+			const { data } = await clienteAxios.post(
+				`/proyectos/${proyecto._id}/colaboradores`,
+				{ email },
+				config
+			);
+
+			// Sincronizar el state
+			const proyectoActualizado = { ...proyecto };
+			proyectoActualizado.colaboradores = [
+				...proyectoActualizado.colaboradores,
+				data,
+			];
+			setProyecto(proyectoActualizado);
+
+			toast.success('Colaborador agregado correctamente', {
+				position: 'bottom-right',
+				autoClose: 1500,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: false,
+				draggable: true,
+				progress: undefined,
+			});
+		} catch (error) {
+			mostrarAlerta({
+				msg: error.response.data.msg,
+				error: true,
+			});
+		}
+	};
+
 	const cerrarSesionProyecto = () => {
 		setProyectos([]);
 		setProyecto({});
@@ -400,6 +445,7 @@ const ProyectosProvider = ({ children }) => {
 				modalEliminarTarea,
 				handleModalEliminarTarea,
 				eliminarTarea,
+				submitColaborador,
 				cerrarSesionProyecto,
 			}}
 		>

@@ -1,10 +1,25 @@
-import React from 'react';
+import FormularioColaborador from '../components/FormularioColaborador';
+import { useParams } from 'react-router-dom';
+import useProyectos from '../hooks/useProyectos';
 
 const NuevoColaborador = () => {
+	const params = useParams();
+
+	const { proyectos } = useProyectos();
+
+	const proyectoAsociado = proyectos.find(
+		proyecto => proyecto._id === params.id
+	);
+
 	return (
-		<div>
-			<h1>g</h1>
-		</div>
+		<>
+			<h1 className='text-4xl font-black'>
+				Añadir Colaborador: {proyectoAsociado?.nombre}
+			</h1>
+			<div className='mt-10 flex justify-center'>
+				<FormularioColaborador />
+			</div>
+		</>
 	);
 };
 
