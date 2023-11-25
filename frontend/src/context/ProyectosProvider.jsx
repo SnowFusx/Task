@@ -15,6 +15,7 @@ const ProyectosProvider = ({ children }) => {
 	const [modalFormularioTarea, setModalFormularioTarea] = useState(false);
 	const [modalEliminarTarea, setModalEliminarTarea] = useState(false);
 	const [tarea, setTarea] = useState({});
+	const [colaborador, setColaborador] = useState({});
 
 	const navigate = useNavigate();
 	const { auth } = useAuth();
@@ -166,7 +167,10 @@ const ProyectosProvider = ({ children }) => {
 			const { data } = await clienteAxios.get(`/proyectos/${id}`, config);
 			setProyecto(data);
 		} catch (error) {
-			console.log(error.response);
+			mostrarAlerta({
+				msg: error.response.data.msg,
+				error: true,
+			});
 		} finally {
 			setCargando(false);
 		}
@@ -374,7 +378,8 @@ const ProyectosProvider = ({ children }) => {
 		}
 	};
 
-	const submitColaborador = async email => {
+	const buscarColaborador = async email => {
+		setCargando(true);
 		try {
 			const token = localStorage.getItem('token');
 			if (!token) {
@@ -389,20 +394,46 @@ const ProyectosProvider = ({ children }) => {
 			};
 
 			const { data } = await clienteAxios.post(
-				`/proyectos/${proyecto._id}/colaboradores`,
+				`/proyectos/colaboradores`,
 				{ email },
 				config
 			);
 
-			// Sincronizar el state
-			const proyectoActualizado = { ...proyecto };
-			proyectoActualizado.colaboradores = [
-				...proyectoActualizado.colaboradores,
-				data,
-			];
-			setProyecto(proyectoActualizado);
+			setColaborador(data);
+			setAlerta({});
+			console.log(data);
+		} catch (error) {
+			mostrarAlerta({
+				msg: error.response.data.msg,
+				error: true,
+			});
+			setColaborador({});
+		} finally {
+			setCargando(false);
+		}
+	};
 
-			toast.success('Colaborador agregado correctamente', {
+	const agregarColaborador = async email => {
+		try {
+			const token = localStorage.getItem('token');
+			if (!token) {
+				navigate('/');
+				return;
+			}
+			const config = {
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
+			};
+
+			const { data } = await clienteAxios.post(
+				`/proyectos/colaboradores/${proyecto._id}`,
+				email,
+				config
+			);
+
+			toast.success('Colaborador añadido correctamente', {
 				position: 'bottom-right',
 				autoClose: 1500,
 				hideProgressBar: false,
@@ -411,6 +442,8 @@ const ProyectosProvider = ({ children }) => {
 				draggable: true,
 				progress: undefined,
 			});
+			setAlerta({});
+			setColaborador({});
 		} catch (error) {
 			mostrarAlerta({
 				msg: error.response.data.msg,
@@ -445,7 +478,10 @@ const ProyectosProvider = ({ children }) => {
 				modalEliminarTarea,
 				handleModalEliminarTarea,
 				eliminarTarea,
-				submitColaborador,
+				buscarColaborador,
+				colaborador,
+				setColaborador,
+				agregarColaborador,
 				cerrarSesionProyecto,
 			}}
 		>

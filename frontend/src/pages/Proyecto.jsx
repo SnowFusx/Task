@@ -6,13 +6,14 @@ import ModalFormularioTarea from '../components/ModalFormularioTarea';
 import ModalEliminarTarea from '../components/ModalEliminarTarea.jsx';
 import Loading from '../components/Loading';
 import PreviewTarea from '../components/PreviewTarea.jsx';
+import PreviewColaborador from '../components/PreviewColaborador.jsx';
 import LinksNavigation from '../components/LinksNavigation.jsx';
-import { formatearFecha } from '../helpers/formatearFecha';
+import { formatearFecha } from '../helpers/formatearFecha.jsx';
+
 import {
 	CrearTareaIcon,
 	EditIcon,
 	EliminateIcon,
-	NuevoColaboradorIcon,
 	NuevoColaboradorXSIcon,
 } from '../components/constants';
 
@@ -109,7 +110,9 @@ const Proyecto = () => {
 						</li>
 
 						<li>
-							<span className='font-bold'>Fecha de entrega:</span>
+							<span className='font-bold'>
+								Fecha de entrega:{' '}
+							</span>
 						</li>
 					</ul>
 				</div>
@@ -149,9 +152,12 @@ const Proyecto = () => {
 						/>
 					</div>
 					<div className='flex flex-wrap gap-4'>
-						{proyecto.tareas?.length ? (
-							proyecto.tareas?.map(tarea => (
-								<PreviewTarea key={tarea._id} tarea={tarea} />
+						{proyecto.colaboradores?.length ? (
+							proyecto.colaboradores?.map(colaborador => (
+								<PreviewColaborador
+									key={colaborador._id}
+									colaborador={colaborador}
+								/>
 							))
 						) : (
 							<p className=' text-gray-600 uppercase'>

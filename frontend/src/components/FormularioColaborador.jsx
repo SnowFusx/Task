@@ -4,40 +4,36 @@ import { useParams } from 'react-router-dom';
 
 const FormularioColaborador = () => {
 	const [email, setEmail] = useState('');
-	const [proyectoSeleccionado, setProyectoSeleccionado] = useState('');
 
-	const { mostrarAlerta, submitColaborador, proyectos } = useProyectos();
+	const {
+		mostrarAlerta,
+		buscarColaborador,
+		proyecto,
+		proyectos,
+		obtenerProyecto,
+		setColaborador,
+	} = useProyectos();
 
 	const params = useParams();
 
 	useEffect(() => {
-		setProyectoSeleccionado('');
-		const proyectoAsociado = proyectos.find(
-			proyecto => proyecto._id === params.id
-		);
-		if (proyectoAsociado) {
-			setProyectoSeleccionado(proyectoAsociado._id);
-		}
-	}, [params.id, proyectos]);
+		setColaborador({});
+	}, [params.id]);
 
 	const handleSubmit = e => {
 		e.preventDefault();
-		if (
-			email === '' ||
-			!email.includes('@') ||
-			!email.includes('.') ||
-			email.length < 5
-		) {
+		if (!email.includes('@') || !email.includes('.') || email.length < 5) {
 			mostrarAlerta({
 				error: 'error',
 				msg: 'Debes introducir un email válido',
 			});
 
+			setColaborador({});
+
 			return;
 		}
 
-		submitColaborador(email);
-		console.log('Buscando colaborador...');
+		buscarColaborador(email);
 	};
 
 	return (
@@ -70,21 +66,13 @@ const FormularioColaborador = () => {
 
 				<select
 					className='w-full border border-gray-400 px-4 py-2 mt-2 rounded-lg focus:outline-none focus:border-blue-500'
-					value={proyectoSeleccionado}
-					onChange={e => setProyectoSeleccionado(e.target.value)}
-					disabled={proyectoSeleccionado == params.id}
+					value={proyecto._id || ''}
+					onChange={e => obtenerProyecto(e.target.value)}
+					disabled={proyecto._id == params.id && proyecto._id}
 				>
-					{proyectoSeleccionado === params.id ? (
-						<option
-							key={proyectoSeleccionado}
-							value={proyectoSeleccionado}
-						>
-							{
-								proyectos.find(
-									proyecto =>
-										proyecto._id === proyectoSeleccionado
-								).nombre
-							}
+					{proyecto._id === params.id && proyecto._id ? (
+						<option key={proyecto._id} value={proyecto._id}>
+							{proyecto.nombre}
 						</option>
 					) : (
 						<>
