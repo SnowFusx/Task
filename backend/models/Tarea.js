@@ -30,6 +30,10 @@ const tareaSchema = moongose.Schema(
 			type: moongose.Schema.Types.ObjectId,
 			ref: 'Proyecto',
 		},
+		completado: {
+			type: moongose.Schema.Types.ObjectId,
+			ref: 'Usuario',
+		},
 	},
 	{
 		timestamps: true,

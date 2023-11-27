@@ -51,21 +51,24 @@ const autenticar = async (req, res) => {
 	}
 
 	// Comprobar si la contraseña es correcta
-	if (await usuario.compararPassword(password)) {
-		res.json({
-			_id: usuario._id,
-			nombre: usuario.nombre,
-			email: usuario.email,
-			token: generarJWT(usuario._id),
-		});
-	} else {
-		const error = new Error('La contraseña es incorrecta');
+	try {
+		if (await usuario.compararPassword(password)) {
+			res.json({
+				_id: usuario._id,
+				nombre: usuario.nombre,
+				email: usuario.email,
+				token: generarJWT(usuario._id),
+			});
+		} else {
+			const error = new Error('La contraseña es incorrecta');
+			return res.status(401).json({ msg: error.message });
+		}
+	} catch (error) {
 		return res.status(401).json({ msg: error.message });
 	}
 };
 
 const confirmar = async (req, res) => {
-	console.log(req.params.token);
 	const usuarioConfirmar = await Usuario.findOne({ token: req.params.token });
 
 	if (!usuarioConfirmar) {
@@ -115,6 +118,7 @@ const olvidePassword = async (req, res) => {
 };
 
 const comprobarToken = async (req, res) => {
+	console.log(req.params);
 	const { token } = req.params;
 
 	const tokenValido = await Usuario.findOne({ token });

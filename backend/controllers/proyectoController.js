@@ -2,10 +2,12 @@ import Proyecto from '../models/Proyecto.js';
 import Usuario from '../models/Usuario.js';
 
 const obtenerProyectos = async (req, res) => {
-	const proyectos = await Proyecto.find()
-		.where('creador')
-		.equals(req.usuario.id)
-		.select('-tareas');
+	const proyectos = await Proyecto.find({
+		$or: [
+			{ creador: { $in: req.usuario } },
+			{ colaboradores: { $in: req.usuario } },
+		],
+	}).select('-tareas');
 	res.json(proyectos);
 };
 
@@ -31,7 +33,13 @@ const obtenerProyecto = async (req, res) => {
 	}
 
 	const proyecto = await Proyecto.findById(id.trim())
-		.populate('tareas')
+		.populate({
+			path: 'tareas',
+			populate: {
+				path: 'completado',
+				select: '-password -confirmado -createdAt -updatedAt -__v -token',
+			},
+		})
 		.populate(
 			'colaboradores',
 			'-password -confirmado -createdAt -updatedAt -__v -token'
@@ -41,7 +49,13 @@ const obtenerProyecto = async (req, res) => {
 		return res.status(404).json({ msg: error.message });
 	}
 
-	if (proyecto.creador.toString() !== req.usuario.id.toString()) {
+	if (
+		proyecto.creador.toString() !== req.usuario.id.toString() &&
+		!proyecto.colaboradores.some(
+			colaborador =>
+				colaborador._id.toString() === req.usuario.id.toString()
+		)
+	) {
 		const error = new Error('No autorizado');
 		return res.status(401).json({ msg: error.message });
 	}
@@ -86,6 +100,7 @@ const editarProyecto = async (req, res) => {
 };
 
 const eliminarProyecto = async (req, res) => {
+	console.log(req.params);
 	const { id } = req.params;
 
 	if (id.trim().length !== 24) {
@@ -93,7 +108,7 @@ const eliminarProyecto = async (req, res) => {
 		return res.status(404).json({ msg: error.message });
 	}
 
-	const proyecto = await Proyecto.findById(id.trim());
+	const proyecto = await Proyecto.findById(id).populate('tareas');
 
 	if (!proyecto) {
 		const error = new Error('Proyecto no encontrado');
@@ -106,6 +121,9 @@ const eliminarProyecto = async (req, res) => {
 	}
 
 	try {
+		await proyecto.tareas.forEach(async tarea => {
+			await tarea.deleteOne();
+		});
 		await proyecto.deleteOne();
 		res.json({ msg: 'Proyecto eliminado' });
 	} catch (error) {
@@ -195,7 +213,32 @@ const agregarColaborador = async (req, res) => {
 	}
 };
 
-const eliminarColaborador = async (req, res) => {};
+const eliminarColaborador = async (req, res) => {
+	const proyecto = await Proyecto.findById(req.params.id);
+
+	if (!proyecto) {
+		const error = new Error('Proyecto no encontrado');
+		return res.status(404).json({ msg: error.message });
+	}
+
+	if (proyecto.creador.toString() !== req.usuario.id.toString()) {
+		const error = new Error('No autorizado');
+		return res.status(401).json({ msg: error.message });
+	}
+
+	// Eliminar el colaborador del proyecto
+	proyecto.colaboradores.pull(req.body.id);
+
+	try {
+		await proyecto.save();
+		res.json({ msg: 'Colaborador eliminado correctamente' });
+	} catch (error) {
+		console.error(`Error: ${error.message}`);
+		res.status(500).json({
+			msg: 'Hubo un error al eliminar el colaborador del proyecto',
+		});
+	}
+};
 
 export {
 	obtenerProyectos,

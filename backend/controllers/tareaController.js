@@ -109,14 +109,53 @@ const eliminarTarea = async (req, res) => {
 	}
 
 	try {
+		const proyecto = await Proyecto.findById(tarea.proyecto);
+		proyecto.tareas.pull(tarea._id);
+
+		await Promise.allSettled([proyecto.save(), tarea.deleteOne()]);
+
 		await tarea.deleteOne();
+
 		res.json({ msg: 'Tarea eliminada' });
 	} catch (error) {
 		console.log(error);
 	}
 };
 
-const cambiarEstadoTarea = async (req, res) => {};
+const cambiarEstadoTarea = async (req, res) => {
+	const { id } = req.params;
+
+	if (id.trim().length !== 24) {
+		const error = new Error('Tarea no encontrada');
+		return res.status(404).json({ msg: error.message });
+	}
+
+	const tarea = await Tarea.findById(id).populate('proyecto');
+
+	if (
+		tarea.proyecto.creador.toString() !== req.usuario.id.toString() &&
+		!tarea.proyecto.colaboradores.some(
+			colaborador =>
+				colaborador._id.toString() === req.usuario._id.toString()
+		)
+	) {
+		return res.status(401).json({ msg: 'No autorizado' });
+	}
+
+	if (!tarea) {
+		const error = new Error('Tarea no encontrada');
+		return res.status(404).json({ msg: error.message });
+	}
+
+	try {
+		tarea.estado = !tarea.estado;
+		tarea.completado = req.usuario.id;
+		const tareaActualizada = await tarea.save();
+		res.json({ tareaActualizada });
+	} catch (error) {
+		console.log(error);
+	}
+};
 
 export {
 	agregarTarea,
