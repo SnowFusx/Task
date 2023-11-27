@@ -150,10 +150,16 @@ const cambiarEstadoTarea = async (req, res) => {
 	try {
 		tarea.estado = !tarea.estado;
 		tarea.completado = req.usuario.id;
-		const tareaActualizada = await tarea.save();
-		res.json({ tareaActualizada });
+		await tarea.save();
+
+		const tareaAlmacenada = await Tarea.findById(id)
+			.populate('proyecto')
+			.populate('completado');
+
+		res.json({ tareaAlmacenada });
 	} catch (error) {
 		console.log(error);
+		return res.status(401).json({ msg: 'No autorizado' });
 	}
 };
 

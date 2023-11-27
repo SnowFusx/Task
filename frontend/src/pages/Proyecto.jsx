@@ -8,6 +8,7 @@ import ModalEliminarTarea from '../components/ModalEliminarTarea.jsx';
 import ModalEliminarColaborador from '../components/ModalEliminarColaborador.jsx';
 import ModalEliminarProyecto from '../components/ModalEliminarProyecto.jsx';
 import PreviewTarea from '../components/PreviewTarea.jsx';
+import Loading from '../components/Loading.jsx';
 import PreviewColaborador from '../components/PreviewColaborador.jsx';
 import LinksNavigation from '../components/LinksNavigation.jsx';
 import { formatearFecha } from '../helpers/formatearFecha.jsx';
@@ -44,7 +45,7 @@ const Proyecto = () => {
 
 	const { msg } = alerta;
 
-	//if (cargando) return <Loading />;
+	if (cargando) return <Loading />;
 	if (msg && alerta.error) return <Alerta alerta={alerta} />;
 
 	return (

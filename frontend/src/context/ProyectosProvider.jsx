@@ -534,7 +534,6 @@ const ProyectosProvider = ({ children }) => {
 	};
 
 	const completarTarea = async id => {
-		console.log(id);
 		try {
 			const token = localStorage.getItem('token');
 			if (!token) {
@@ -555,13 +554,13 @@ const ProyectosProvider = ({ children }) => {
 			);
 
 			// Destructuring data
-			const { tareaActualizada } = data;
+			const { tareaAlmacenada } = data;
 
 			// Sincronizar el state
 			const proyectoActualizado = { ...proyecto };
 			proyectoActualizado.tareas = proyecto.tareas.map(tareaState =>
-				tareaState._id === tareaActualizada._id
-					? tareaActualizada
+				tareaState._id === tareaAlmacenada._id
+					? tareaAlmacenada
 					: tareaState
 			);
 			setProyecto(proyectoActualizado);
