@@ -52,7 +52,7 @@ const Sidebar = () => {
 				</div>
 
 				<div
-					class='w-full flex-grow lg:flex lg:items-center lg:w-auto hidden lg:block pt-6 lg:pt-0'
+					class='w-full flex-grow lg:flex lg:items-center lg:w-auto hidden pt-6 lg:pt-0'
 					id='nav-content'
 				>
 					<div className='mt-5'>
