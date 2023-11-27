@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import useProyectos from '../hooks/useProyectos';
-import Alerta from './Alerta';
 
 const FormularioProyecto = () => {
 	const [id, setId] = useState(null);
@@ -22,7 +21,7 @@ const FormularioProyecto = () => {
 			setFechaEntrega(proyecto.fechaEntrega?.split('T')[0]);
 			setCliente(proyecto.cliente);
 		}
-	}, [params]);
+	}, [params, proyecto]);
 
 	const navigate = useNavigate();
 
@@ -60,7 +59,6 @@ const FormularioProyecto = () => {
 	return (
 		<>
 			<div className='block w-full md:w-3/4 lg:w-1/2'>
-				{msg && <Alerta alerta={alerta} />}
 				<form
 					className='bg-white py-10 px-5 rounded-lg shadow block'
 					onSubmit={handleSubmit}

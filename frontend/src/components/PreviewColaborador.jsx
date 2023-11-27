@@ -1,19 +1,12 @@
 import useProyectos from '../hooks/useProyectos';
 import LinksNavigation from './LinksNavigation.jsx';
 import { formatearFecha } from '../helpers/formatearFecha';
-import { EliminateIcon, EliminarColaboradorIcon } from './constants';
+import { EliminarColaboradorIcon } from './constants';
 
 const PreviewColaborador = ({ colaborador }) => {
 	const { nombre, email } = colaborador;
 
-	const { handleModalEditarTarea, handleModalEliminarTarea } = useProyectos();
-
-	const handleEliminar = () => {
-		// if (confirm('¿Estás seguro de eliminar la tarea?')) {
-		// 	eliminarTarea(_id);
-		// 	return;
-		// }
-	};
+	const { handleModalEliminarColaborador } = useProyectos();
 
 	return (
 		<div className={`bg-white shadow rounded-lg w-[300px] min-w-[300px]`}>
@@ -32,7 +25,9 @@ const PreviewColaborador = ({ colaborador }) => {
 							text={'Eliminar'}
 							svg={<EliminarColaboradorIcon />}
 							link={false}
-							onClick={() => handleModalEliminarTarea(tarea)}
+							onClick={() =>
+								handleModalEliminarColaborador(colaborador)
+							}
 						/>
 					</div>
 

@@ -16,6 +16,7 @@ const NuevoPassword = () => {
 		const handleConfirmarCuenta = async () => {
 			try {
 				await clienteAxios.get(`/usuarios/olvide-password/${token}`);
+				console.log(token);
 				setTokenValido(true);
 			} catch (error) {
 				setAlerta({

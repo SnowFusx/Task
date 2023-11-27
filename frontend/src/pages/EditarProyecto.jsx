@@ -1,13 +1,17 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import useProyectos from '../hooks/useProyectos';
+import usePropietario from '../hooks/usePropietario';
 import FormularioProyecto from '../components/FormularioProyecto';
+import Alerta from '../components/Alerta';
 import Loading from '../components/Loading';
 
 const EditarProyecto = () => {
 	const params = useParams();
-	const { obtenerProyecto, proyecto, cargando, eliminarProyecto } =
+	const { obtenerProyecto, proyecto, cargando, eliminarProyecto, alerta } =
 		useProyectos();
+
+	const propietario = usePropietario();
 
 	useEffect(() => {
 		obtenerProyecto(params.id);
@@ -15,44 +19,29 @@ const EditarProyecto = () => {
 
 	const { nombre } = proyecto;
 
-	const handleEliminar = () => {
-		if (confirm('¿Estás seguro de eliminar el proyecto?')) {
-			eliminarProyecto(params.id);
-			return;
-		}
-	};
+	const { msg } = alerta;
 
-	if (cargando) return <Loading />;
+	//if (cargando) return <Loading />;
+	if (msg && alerta.error) return <Alerta alerta={alerta} />;
 
 	return (
 		<>
-			<div className='flex justify-between'>
-				<h1 className='font-black text-4xl'>Editando: {nombre}</h1>
-
-				<button
-					className='flex gap-1 ml-5 px-1 py-3 text-sm items-center text-gray-600 rounded-lg uppercase font-bold hover:text-red-700 transition-colors'
-					onClick={handleEliminar}
-				>
-					<svg
-						xmlns='http://www.w3.org/2000/svg'
-						fill='none'
-						viewBox='0 0 24 24'
-						strokeWidth={1.5}
-						stroke='currentColor'
-						className='w-4 h-4'
-					>
-						<path
-							strokeLinecap='round'
-							strokeLinejoin='round'
-							d='M6 18L18 6M6 6l12 12'
-						/>
-					</svg>
-					Eliminar Proyecto
-				</button>
-			</div>
-			<div className='mt-10 flex justify-center'>
-				<FormularioProyecto />
-			</div>
+			{propietario ? (
+				<>
+					<div className='flex justify-between'>
+						<h1 className='font-black text-4xl'>
+							Editando: {nombre}
+						</h1>
+					</div>
+					<div className='mt-10 flex justify-center'>
+						<FormularioProyecto />
+					</div>
+				</>
+			) : (
+				<p className='text-center text-gray-600 uppercase p-5'>
+					No tienes permisos para editar este proyecto
+				</p>
+			)}
 		</>
 	);
 };

@@ -1,4 +1,6 @@
 import useProyectos from '../hooks/useProyectos';
+import useAuth from '../hooks/useAuth.jsx';
+import usePropietario from '../hooks/usePropietario.jsx';
 import LinksNavigation from './LinksNavigation.jsx';
 import { formatearFecha } from '../helpers/formatearFecha';
 import {
@@ -20,6 +22,8 @@ const PreviewTarea = ({ tarea }) => {
 		estado,
 	} = tarea;
 
+	const { auth } = useAuth();
+
 	const prioridadColor =
 		prioridad === 'alta'
 			? 'bg-rose-600 text-white font-bold px-1 py-1 rounded text-xs tracking-wider w-16 text-center'
@@ -27,14 +31,10 @@ const PreviewTarea = ({ tarea }) => {
 			? 'bg-amber-500 text-white font-bold  px-1 py-1 rounded text-xs tracking-wider w-16 text-center'
 			: 'bg-lime-500 text-white font-bold  px-1 py-1 rounded text-xs tracking-wider w-16 text-center';
 
-	const { handleModalEditarTarea, handleModalEliminarTarea } = useProyectos();
+	const { handleModalEditarTarea, handleModalEliminarTarea, completarTarea } =
+		useProyectos();
 
-	const handleEliminar = () => {
-		// if (confirm('¿Estás seguro de eliminar la tarea?')) {
-		// 	eliminarTarea(_id);
-		// 	return;
-		// }
-	};
+	const propietario = usePropietario();
 
 	const estadoColor = estado ? 'bg-gray-300' : 'bg-white';
 	const estadoTexto = estado ? 'line-through text-gray-500' : '';
@@ -45,44 +45,35 @@ const PreviewTarea = ({ tarea }) => {
 		>
 			<div className='flex justify-between items-center pr-4'>
 				{estado ? (
-					<p className='text-xs uppercase font-bold text-white px-2 py-1 rounded-lg'>
-						Completada
+					<p className='text-xs uppercase font-bold text-slate-600 px-2 py-1 rounded-lg'>
+						Completada por {tarea.completado.nombre}
 					</p>
 				) : (
 					<p className={prioridadColor}>{prioridad}</p>
 				)}
 				<div className='flex items-center justify-end gap-2 text-xs mt-2'>
-					{estado ? (
-						<LinksNavigation
-							styles={
-								'uppercase font-bold flex items-center text-gray-600 hover:text-black cursor-pointer'
-							}
-							text={''}
-							svg={<CheckedIcon />}
-							link={false}
-							onClick={handleEliminar}
-						/>
-					) : (
-						<LinksNavigation
-							styles={
-								'uppercase font-bold flex items-center text-gray-600 hover:text-black cursor-pointer'
-							}
-							text={''}
-							svg={<NoCheckedIcon />}
-							link={false}
-							onClick={handleEliminar}
-						/>
-					)}
 					<LinksNavigation
 						styles={
 							'uppercase font-bold flex items-center text-gray-600 hover:text-black cursor-pointer'
 						}
 						text={''}
-						id={_id}
-						svg={<EditIcon />}
+						svg={estado ? <CheckedIcon /> : <NoCheckedIcon />}
 						link={false}
-						onClick={() => handleModalEditarTarea(tarea)}
+						onClick={() => completarTarea(_id)}
 					/>
+
+					{propietario && (
+						<LinksNavigation
+							styles={
+								'uppercase font-bold flex items-center text-gray-600 hover:text-black cursor-pointer'
+							}
+							text={''}
+							id={_id}
+							svg={<EditIcon />}
+							link={false}
+							onClick={() => handleModalEditarTarea(tarea)}
+						/>
+					)}
 					<LinksNavigation
 						styles={
 							'flex text-xs items-center text-gray-600 rounded-lg uppercase font-bold hover:text-red-700 transition-colors'

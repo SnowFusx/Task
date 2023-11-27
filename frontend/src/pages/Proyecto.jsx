@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import useProyectos from '../hooks/useProyectos';
+import usePropietario from '../hooks/usePropietario.jsx';
 import Alerta from '../components/Alerta';
 import ModalFormularioTarea from '../components/ModalFormularioTarea';
 import ModalEliminarTarea from '../components/ModalEliminarTarea.jsx';
-import Loading from '../components/Loading';
+import ModalEliminarColaborador from '../components/ModalEliminarColaborador.jsx';
+import ModalEliminarProyecto from '../components/ModalEliminarProyecto.jsx';
 import PreviewTarea from '../components/PreviewTarea.jsx';
 import PreviewColaborador from '../components/PreviewColaborador.jsx';
 import LinksNavigation from '../components/LinksNavigation.jsx';
@@ -20,13 +22,9 @@ import {
 const Proyecto = () => {
 	const params = useParams();
 
-	const handleEliminar = () => {
-		if (confirm('¿Estás seguro de eliminar el proyecto?')) {
-			eliminarProyecto(params.id);
+	const propietario = usePropietario();
 
-			return;
-		}
-	};
+	const { handleModalEliminarProyecto } = useProyectos();
 
 	const {
 		obtenerProyecto,
@@ -46,58 +44,54 @@ const Proyecto = () => {
 
 	const { msg } = alerta;
 
-	if (cargando) return <Loading />;
+	//if (cargando) return <Loading />;
+	if (msg && alerta.error) return <Alerta alerta={alerta} />;
 
 	return (
 		<>
-			<div className='flex justify-between'>
-				<h1 className='font-black text-4xl'>{nombre}</h1>
-				<div className='flex items-center gap-2 text-gray-600 text-sm hover:text-black cursor-pointer'>
-					<LinksNavigation
-						styles={
-							'flex gap-1 px-1 text-xs items-center text-gray-600 rounded-lg uppercase font-bold hover:text-gray-700 transition-colors'
-						}
-						text={'Editar'}
-						ruta={'/proyectos/editar/'}
-						id={params.id}
-						svg={<EditIcon />}
-						link={true}
-					/>
-
-					<LinksNavigation
-						styles={
-							'flex gap-1 px-1 text-xs items-center text-gray-600 rounded-lg uppercase font-bold hover:text-red-700 transition-colors'
-						}
-						text={'Eliminar proyecto'}
-						svg={<EliminateIcon />}
-						link={false}
-						onClick={handleEliminar}
-					/>
+			<div className='flex justify-between flex-wrap gap-4'>
+				<div className=''>
+					{propietario ? (
+						<p className='text-sm p-2 bg-slate-700 text-slate-300 rounded max-w-fit'>
+							Propietario
+						</p>
+					) : (
+						<p className='text-sm p-2 bg-slate-700 rounded text-slate-300 max-w-fit'>
+							Colaborador
+						</p>
+					)}
+					<h1 className='font-black text-4xl'>{nombre}</h1>
 				</div>
+				{propietario && (
+					<div className='flex items-center gap-2 text-gray-600 text-sm hover:text-black cursor-pointer'>
+						<LinksNavigation
+							styles={
+								'flex gap-1 px-1 text-xs items-center text-gray-600 rounded-lg uppercase font-bold hover:text-gray-700 transition-colors'
+							}
+							text={'Editar'}
+							ruta={'/proyectos/editar/'}
+							id={params.id}
+							svg={<EditIcon />}
+							link={true}
+						/>
+
+						<LinksNavigation
+							styles={
+								'flex gap-1 px-1 text-xs items-center text-gray-600 rounded-lg uppercase font-bold hover:text-red-700 transition-colors'
+							}
+							text={'Eliminar proyecto'}
+							svg={<EliminateIcon />}
+							link={false}
+							onClick={() =>
+								handleModalEliminarProyecto(proyecto)
+							}
+						/>
+					</div>
+				)}
 			</div>
 
-			{modalFormularioTarea ? (
-				<></> // Contenido cuando modal es true
-			) : (
-				msg && <Alerta alerta={alerta} /> // Contenido cuando modal es false y msg es true
-			)}
-
-			<LinksNavigation
-				styles={
-					'flex items-center justify-center gap-2 text-sm mt-5 px-5 py-3 w-full md:w-auto rounded-lg uppercase font-bold bg-slate-800 text-white text-center hover:bg-slate-950 transition-colors'
-				}
-				text={'Crear Tarea'}
-				svg={<CrearTareaIcon />}
-				link={false}
-				onClick={handleModalTarea}
-			/>
-
-			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5 mt-5'>
-				<div className='bg-white rounded-lg shadow p-5'>
-					<h2 className='font-bold text-xl mb-3'>Descripción</h2>
-					<p className='text-gray-600'>{descripcion}</p>
-				</div>
-				<div className='bg-white rounded-lg shadow p-5'>
+			<div className='flex flex-wrap gap-4 mt-10'>
+				<div className='bg-white w-1/4 min-w-[300px] lg:max-w-[300px] grow rounded-lg shadow p-5'>
 					<h2 className='font-bold text-xl mb-3'>Información</h2>
 					<ul className='text-gray-600'>
 						<li>
@@ -116,52 +110,89 @@ const Proyecto = () => {
 						</li>
 					</ul>
 				</div>
+				<div className='bg-white rounded-lg grow min-w-[300px] flex-1 shadow p-5'>
+					<h2 className='font-bold text-xl mb-3'>Descripción</h2>
+					<p className='text-gray-600'>{descripcion}</p>
+				</div>
 			</div>
 
 			<div className='flex flex-wrap gap-5'>
-				<div className='lg:w-2/3  mt-5 mr-4 '>
-					<h2 className='font-bold text-xl my-5'>
-						Tareas del proyecto
-					</h2>
-					<div className='flex flex-wrap gap-4 lg:border-r-2'>
+				{propietario && (
+					<div className='mt-5 w-full'>
+						<div className='flex gap-2 items-center'>
+							<h2 className='font-bold text-xl my-5'>
+								Colaboradores{' '}
+							</h2>
+							{propietario && (
+								<LinksNavigation
+									styles={
+										'flex gap-1 px-1 pt-1 text-xs items-center text-gray-600 rounded-lg uppercase font-bold hover:text-gray-700 transition-colors'
+									}
+									text={'Nuevo'}
+									svg={<NuevoColaboradorXSIcon />}
+									link={true}
+									ruta={`/proyectos/nuevo-colaborador/`}
+									id={proyecto._id}
+								/>
+							)}
+						</div>
+						<div className='flex flex-wrap gap-4'>
+							{proyecto.colaboradores?.length ? (
+								proyecto.colaboradores?.map(colaborador => (
+									<PreviewColaborador
+										key={colaborador._id}
+										colaborador={colaborador}
+									/>
+								))
+							) : (
+								<p className=' text-gray-600 uppercase'>
+									Sin colaboradores
+								</p>
+							)}
+						</div>
+					</div>
+				)}
+				<div className=''>
+					<div className='flex gap-2'>
+						<h2 className='font-bold text-xl my-5'>
+							Tareas del proyecto
+						</h2>
+						{propietario && (
+							<LinksNavigation
+								styles={
+									'flex gap-1 px-1 pt-1 text-xs items-center text-gray-600 rounded-lg uppercase font-bold hover:text-gray-700 transition-colors'
+								}
+								text={'Crear Tarea'}
+								svg={<CrearTareaIcon />}
+								link={false}
+								onClick={handleModalTarea}
+							/>
+						)}
+					</div>
+					<div className='flex flex-wrap gap-4'>
 						{proyecto.tareas?.length ? (
-							proyecto.tareas?.map(tarea => (
-								<PreviewTarea key={tarea._id} tarea={tarea} />
-							))
+							proyecto.tareas
+								?.slice() // Hacemos una copia del array para no modificar el original
+								.sort((a, b) => {
+									// Primero, ordenamos por estado (true al final)
+									if (a.estado === b.estado) {
+										// Si los estados son iguales, ordenamos por createdAt (más reciente primero)
+										return -a.createdAt.localeCompare(
+											b.createdAt
+										);
+									}
+									// Ordenamos por estado
+									return a.estado ? 1 : -1;
+								})
+								.map(tarea => (
+									<PreviewTarea
+										key={tarea._id}
+										tarea={tarea}
+									/>
+								))
 						) : (
 							<p className='text-gray-600 uppercase'>
 								No hay tareas aún
-							</p>
-						)}
-					</div>
-				</div>
-				<div className='mt-5 lg:w-1/4'>
-					<div className='flex gap-2 items-center'>
-						<h2 className='font-bold text-xl my-5'>
-							Colaboradores{' '}
-						</h2>
-						<LinksNavigation
-							styles={
-								'flex gap-1 px-1 text-xs items-center text-gray-600 rounded-lg uppercase font-bold hover:text-gray-700 transition-colors'
-							}
-							text={'Nuevo'}
-							svg={<NuevoColaboradorXSIcon />}
-							link={true}
-							ruta={`/proyectos/nuevo-colaborador/`}
-							id={proyecto._id}
-						/>
-					</div>
-					<div className='flex flex-wrap gap-4'>
-						{proyecto.colaboradores?.length ? (
-							proyecto.colaboradores?.map(colaborador => (
-								<PreviewColaborador
-									key={colaborador._id}
-									colaborador={colaborador}
-								/>
-							))
-						) : (
-							<p className=' text-gray-600 uppercase'>
-								Sin colaboradores
 							</p>
 						)}
 					</div>
@@ -170,6 +201,8 @@ const Proyecto = () => {
 
 			<ModalFormularioTarea />
 			<ModalEliminarTarea />
+			<ModalEliminarColaborador />
+			<ModalEliminarProyecto />
 		</>
 	);
 };

@@ -1,5 +1,6 @@
 import useProyectos from '../hooks/useProyectos';
 import PreviewProyecto from '../components/PreviewProyecto';
+import ModalEliminarProyecto from '../components/ModalEliminarProyecto';
 import { useEffect } from 'react';
 
 const Proyectos = () => {
@@ -15,18 +16,27 @@ const Proyectos = () => {
 
 				<div className='mt-10 flex flex-wrap gap-4'>
 					{proyectos.length ? (
-						proyectos.map(proyecto => (
-							<PreviewProyecto
-								key={proyecto._id}
-								proyecto={proyecto}
-							/>
-						))
+						proyectos
+							?.slice()
+							.sort((a, b) => {
+								return (
+									new Date(b.createdAt) -
+									new Date(a.createdAt)
+								);
+							})
+							.map(proyecto => (
+								<PreviewProyecto
+									key={proyecto._id}
+									proyecto={proyecto}
+								/>
+							))
 					) : (
 						<p className='text-center text-gray-600 uppercase p-5'>
 							No hay proyectos aún
 						</p>
 					)}
 				</div>
+				<ModalEliminarProyecto />
 			</>
 		)
 	);
