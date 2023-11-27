@@ -19,6 +19,7 @@ const ProyectosProvider = ({ children }) => {
 	const [colaborador, setColaborador] = useState({});
 	const [modalEliminarColaborador, setModalEliminarColaborador] =
 		useState(false);
+	const [buscador, setBuscador] = useState(false);
 
 	const { auth } = useAuth();
 	const navigate = useNavigate();
@@ -587,6 +588,10 @@ const ProyectosProvider = ({ children }) => {
 		}
 	};
 
+	const handleBuscador = () => {
+		setBuscador(!buscador);
+	};
+
 	const cerrarSesionProyecto = () => {
 		setProyectos([]);
 		setProyecto({});
@@ -623,6 +628,9 @@ const ProyectosProvider = ({ children }) => {
 				handleModalEliminarColaborador,
 				eliminarColaborador,
 				completarTarea,
+				buscador,
+				setBuscador,
+				handleBuscador,
 				cerrarSesionProyecto,
 			}}
 		>

@@ -1,7 +1,11 @@
 import useAuth from '../hooks/useAuth';
+import useProyectos from '../hooks/useProyectos';
+import Busqueda from './Busqueda';
 
 const Header = () => {
 	const { auth } = useAuth();
+
+	const { handleBuscador } = useProyectos();
 	return (
 		<>
 			<header className='px-4 py-5 bg-white border-b'>
@@ -10,12 +14,14 @@ const Header = () => {
 						Bienvenido/a,{' '}
 						<span className='text-sky-600'>{auth.nombre}</span>
 					</p>
-					<input
-						type='search'
-						placeholder='Buscar Proyecto'
-						className='w-full md:w-1/3 lg:w-1/4 px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-transparent'
-					/>
+					<button
+						className='bg-slate-800 border-2 hover:bg-slate-900 border-slate-800 hover:border-2  hover:border-sky-800 text-white px-4 py-2 rounded-lg font-bold text-sm'
+						onClick={() => handleBuscador()}
+					>
+						Buscar Proyecto
+					</button>
 				</div>
+				<Busqueda />
 			</header>
 		</>
 	);
