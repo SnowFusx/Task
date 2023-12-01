@@ -204,7 +204,7 @@ const agregarColaborador = async (req, res) => {
 
 	try {
 		await proyecto.save();
-		res.json({ msg: 'Colaborador agregado correctamente' });
+		res.status(200).json({ msg: 'Colaborador agregado correctamente' });
 	} catch (error) {
 		console.error(`Error: ${error.message}`);
 		res.status(500).json({

@@ -6,39 +6,37 @@ import { useEffect } from 'react';
 const Proyectos = () => {
 	const { proyectos, setProyecto } = useProyectos();
 
-	return (
-		useEffect(() => {
-			setProyecto({});
-		}, []),
-		(
-			<>
-				<h1 className='text-4xl font-black'>Proyectos</h1>
+	useEffect(() => {
+		setProyecto({});
+	}, []);
 
-				<div className='mt-10 flex flex-wrap gap-4'>
-					{proyectos.length ? (
-						proyectos
-							?.slice()
-							.sort((a, b) => {
-								return (
-									new Date(b.createdAt) -
-									new Date(a.createdAt)
-								);
-							})
-							.map(proyecto => (
-								<PreviewProyecto
-									key={proyecto._id}
-									proyecto={proyecto}
-								/>
-							))
-					) : (
-						<p className='text-center text-gray-600 uppercase p-5'>
-							No hay proyectos aún
-						</p>
-					)}
-				</div>
-				<ModalEliminarProyecto />
-			</>
-		)
+	return (
+		<>
+			<h1 className='text-4xl font-black'>Proyectos</h1>
+
+			<div className='mt-10 flex flex-wrap gap-4'>
+				{proyectos.length ? (
+					proyectos
+						?.slice()
+						.sort((a, b) => {
+							return (
+								new Date(b.createdAt) - new Date(a.createdAt)
+							);
+						})
+						.map(proyecto => (
+							<PreviewProyecto
+								key={proyecto._id}
+								proyecto={proyecto}
+							/>
+						))
+				) : (
+					<p className='text-center text-gray-600 uppercase p-5'>
+						No hay proyectos aún
+					</p>
+				)}
+			</div>
+			<ModalEliminarProyecto />
+		</>
 	);
 };
 
