@@ -27,21 +27,21 @@ const Sidebar = () => {
 	};
 	return (
 		<>
-			<nav class='flex items-center justify-between flex-wrap bg-gray-200 p-6 fixed w-full z-10'>
-				<div class='flex items-center flex-no-shrink text-white mr-6'>
+			<nav className='flex items-center justify-between flex-wrap bg-gray-200 p-6 fixed w-full z-10'>
+				<div className='flex items-center flex-no-shrink text-white mr-6'>
 					<Link to='/proyectos'>
 						<img src={logo} alt='logo' className='w-20' />
 					</Link>
 				</div>
 
-				<div class='block lg:hidden'>
+				<div className='block lg:hidden'>
 					<button
 						id='nav-toggle'
-						class='flex items-center px-3 py-2 border rounded text-slate-900  hover:border-slate-900'
+						className='flex items-center px-3 py-2 border rounded text-slate-900  hover:border-slate-900'
 						onClick={handleMenu}
 					>
 						<svg
-							class='fill-current h-3 w-3'
+							className='fill-current h-3 w-3'
 							viewBox='0 0 20 20'
 							xmlns='http://www.w3.org/2000/svg'
 						>
@@ -52,7 +52,7 @@ const Sidebar = () => {
 				</div>
 
 				<div
-					class='w-full flex-grow lg:flex lg:items-center lg:w-auto hidden pt-6 lg:pt-0'
+					className='w-full flex-grow lg:flex lg:items-center lg:w-auto hidden pt-6 lg:pt-0'
 					id='nav-content'
 				>
 					<div className='mt-5'>

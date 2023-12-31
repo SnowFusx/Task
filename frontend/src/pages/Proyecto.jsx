@@ -11,7 +11,8 @@ import PreviewTarea from '../components/PreviewTarea.jsx';
 import Loading from '../components/Loading.jsx';
 import PreviewColaborador from '../components/PreviewColaborador.jsx';
 import LinksNavigation from '../components/LinksNavigation.jsx';
-import { formatearFecha } from '../helpers/formatearFecha.jsx';
+import io from 'socket.io-client';
+let socket;
 
 import {
 	CrearTareaIcon,
@@ -35,11 +36,43 @@ const Proyecto = () => {
 		eliminarProyecto,
 		handleModalTarea,
 		modalFormularioTarea,
+		submitTareasProyecto,
+		updateCompletarTarea,
+		eliminarTareaProyecto,
+		actualizarTareaProyecto,
 	} = useProyectos();
 
 	useEffect(() => {
 		obtenerProyecto(params.id);
 	}, []);
+
+	useEffect(() => {
+		socket = io(import.meta.env.VITE_BACKEND_URL);
+		socket.emit('abrir-proyecto', params.id);
+	}, []);
+
+	useEffect(() => {
+		socket.on('tarea-agregada', tareaNueva => {
+			if (tareaNueva.proyecto === proyecto._id) {
+				submitTareasProyecto(tareaNueva);
+			}
+		});
+		socket.on('tarea-completada', tareaCompletada => {
+			if (tareaCompletada.proyecto._id === proyecto._id) {
+				updateCompletarTarea(tareaCompletada);
+			}
+		});
+		socket.on('tarea-eliminada', tareaEliminada => {
+			if (tareaEliminada.proyecto === proyecto._id) {
+				eliminarTareaProyecto(tareaEliminada);
+			}
+		});
+		socket.on('tarea-actualizada', tareaActualizada => {
+			if (tareaActualizada.proyecto._id === proyecto._id) {
+				actualizarTareaProyecto(tareaActualizada);
+			}
+		});
+	});
 
 	const { nombre, descripcion, cliente, fechaEntrega } = proyecto;
 
